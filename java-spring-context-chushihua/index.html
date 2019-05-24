@@ -1,0 +1,314 @@
+<!DOCTYPE html><html class="theme-next mist use-motion" lang="zh-Hans"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta name="theme-color" content="#222"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet"><link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet"><link href="/css/main.css?v=5.1.4" rel="stylesheet"><link rel="icon" type="image/png" sizes="16x16" href="/images/java_icon.ico?v=5.1.4"><meta name="keywords" content="Java,Spring,"><meta name="description" content="SpringApplicationContext初始化过程ContextLoaderListener在SpringBoot面世之前。在一般的WEB项目中，项目的启动都是从web.xml开始的，如果我们想在项目中使用Spring，只需在web.xml文件中指定以下内容即可： 1234567&amp;lt;context-param&amp;gt;		&amp;lt;param-name&amp;gt;contextConfigLo"><meta name="keywords" content="Java,Spring"><meta property="og:type" content="article"><meta property="og:title" content="SpringApplicationContext初始化过程"><meta property="og:url" content="http://yoursite.com/java-spring-context-chushihua/index.html"><meta property="og:site_name" content="编程常青树"><meta property="og:description" content="SpringApplicationContext初始化过程ContextLoaderListener在SpringBoot面世之前。在一般的WEB项目中，项目的启动都是从web.xml开始的，如果我们想在项目中使用Spring，只需在web.xml文件中指定以下内容即可： 1234567&amp;lt;context-param&amp;gt;		&amp;lt;param-name&amp;gt;contextConfigLo"><meta property="og:locale" content="zh-Hans"><meta property="og:updated_time" content="2019-05-24T15:41:32.000Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="SpringApplicationContext初始化过程"><meta name="twitter:description" content="SpringApplicationContext初始化过程ContextLoaderListener在SpringBoot面世之前。在一般的WEB项目中，项目的启动都是从web.xml开始的，如果我们想在项目中使用Spring，只需在web.xml文件中指定以下内容即可： 1234567&amp;lt;context-param&amp;gt;		&amp;lt;param-name&amp;gt;contextConfigLo"><script id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Mist",version:"5.1.4",sidebar:{position:"left",display:"always",offset:12,b2t:!1,scrollpercent:!1,onmobile:!0},fancybox:!0,tabs:!0,motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},duoshuo:{userId:"0",author:"博主"},algolia:{applicationID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}}}</script><link rel="canonical" href="http://yoursite.com/java-spring-context-chushihua/"><script>!function(e,t,o,c,i,a,n){e.DaoVoiceObject=i,e[i]=e[i]||function(){(e[i].q=e[i].q||[]).push(arguments)},e[i].l=1*new Date,a=t.createElement(o),n=t.getElementsByTagName(o)[0],a.async=1,a.src=c,a.charset="utf-8",n.parentNode.insertBefore(a,n)}(window,document,"script",("https:"==document.location.protocol?"https:":"http:")+"//widget.daovoice.io/widget/0f81ff2f.js","daovoice"),daovoice("init",{app_id:"5b52c3f9"}),daovoice("update")</script><title>SpringApplicationContext初始化过程 | 编程常青树</title></head><script src="/js/src/love.js"></script><body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans"><div class="container sidebar-position-left page-post-detail"><div class="headband"></div><header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">编程常青树</span><span class="logo-line-after"><i></i></span></a></div><p class="site-subtitle"></p></div><div class="site-nav-toggle"><button><span class="btn-bar"></span><span class="btn-bar"></span><span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i><br>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于</a></li><li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger"><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class="site-search"><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class="search-icon"><i class="fa fa-search"></i></span><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span><div class="local-search-input-wrapper"><input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input"></div></div><div id="local-search-result"></div></div></div></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope itemtype="http://schema.org/Article"><div class="post-block"><link itemprop="mainEntityOfPage" href="http://yoursite.com/java-spring-context-chushihua/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="name" content="Jarome Jiang"><meta itemprop="description" content><meta itemprop="image" content="/images/avatar.jpg"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="编程常青树"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">SpringApplicationContext初始化过程</h1><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-18T20:52:08+08:00">2018-10-18</time></span> <span class="post-category"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a></span> ， <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a></span></span> <span class="post-comments-count"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span><a href="/java-spring-context-chushihua/#comments" itemprop="discussionUrl"><span class="post-comments-count gitment-comments-count" data-xid="/java-spring-context-chushihua/" itemprop="commentsCount"></span></a></span><div class="post-tags"><a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a><a href="/tags/Spring/" rel="tag"><i class="fa fa-tag"></i> Spring</a></div><div class="post-wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">字数统计&#58;</span> <span title="字数统计">1.1k</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span title="阅读时长">4</span></div></div></header><div class="post-body" itemprop="articleBody"><h1 id="SpringApplicationContext初始化过程"><a href="#SpringApplicationContext初始化过程" class="headerlink" title="SpringApplicationContext初始化过程"></a>SpringApplicationContext初始化过程</h1><h2 id="ContextLoaderListener"><a href="#ContextLoaderListener" class="headerlink" title="ContextLoaderListener"></a>ContextLoaderListener</h2><p>在SpringBoot面世之前。在一般的WEB项目中，项目的启动都是从web.xml开始的，如果我们想在项目中使用Spring，只需在web.xml文件中指定以下内容即可：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;context-param&gt;</span><br><span class="line">		&lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;</span><br><span class="line">		&lt;param-value&gt;classpath:applicationContext.xml&lt;/param-value&gt;</span><br><span class="line">&lt;/context-param&gt;</span><br><span class="line">&lt;listener&gt;</span><br><span class="line">		&lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;</span><br><span class="line">&lt;/listener&gt;</span><br></pre></td></tr></table></figure><p>通过以上代码片段不难看出Spring正是通过ContextLoaderListener监听器来进行容器初始化的，查看<code>ContextLoaderListener</code>源码：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ContextLoaderListener</span> <span class="keyword">extends</span> <span class="title">ContextLoader</span> <span class="keyword">implements</span> <span class="title">ServletContextListener</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ContextLoaderListener</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ContextLoaderListener</span><span class="params">(WebApplicationContext context)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(context);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextInitialized</span><span class="params">(ServletContextEvent event)</span> </span>&#123;</span><br><span class="line">		initWebApplicationContext(event.getServletContext());</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextDestroyed</span><span class="params">(ServletContextEvent event)</span> </span>&#123;</span><br><span class="line">		closeWebApplicationContext(event.getServletContext());</span><br><span class="line">		ContextCleanupListener.cleanupAttributes(event.getServletContext());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>根据该类中的注释可以看出initWebApplicationContext方法为核心的初始化方法，从initWebApplicationContext方法源代码可以看出Spring初始化容器主要分为以下几个步骤：</p><ol><li>创建容器WebApplicationContext</li><li>验证当前容器是否为可配置的，是则配置并且刷新当前容器</li><li>将当前创建的容器设置到servlet上下文中</li></ol><h2 id="SpringBoot中的Spring"><a href="#SpringBoot中的Spring" class="headerlink" title="SpringBoot中的Spring"></a>SpringBoot中的Spring</h2><blockquote><p>上文根据一般WEB项目跟踪了Spring容器初始化过程，但是从上诉过程并不能相对明显地看出Spring容器初始化过程。</p></blockquote><p>在SpringBoot面世后，它简化了许多的配置方式，在SpringBoot中只需引入相应的start即可使用Spring，接下来就去看看SpringBoot中的Spring吧。</p><p>通过SpringBoot入口方法<code>SpringApplication.run</code>可以看到以下代码：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">ApplicationArguments applicationArguments = <span class="keyword">new</span> DefaultApplicationArguments(</span><br><span class="line">    args);</span><br><span class="line">ConfigurableEnvironment environment = prepareEnvironment(listeners,</span><br><span class="line">                                                         applicationArguments);</span><br><span class="line">configureIgnoreBeanInfo(environment);</span><br><span class="line">Banner printedBanner = printBanner(environment);</span><br><span class="line"><span class="comment">//创建容器</span></span><br><span class="line">context = createApplicationContext();</span><br><span class="line">exceptionReporters = getSpringFactoriesInstances(</span><br><span class="line">    SpringBootExceptionReporter.class,</span><br><span class="line">    <span class="keyword">new</span> Class[] &#123; ConfigurableApplicationContext.class &#125;, context);</span><br><span class="line"><span class="comment">//容器准备工作</span></span><br><span class="line">prepareContext(context, environment, listeners, applicationArguments,</span><br><span class="line">               printedBanner);</span><br><span class="line"><span class="comment">//刷新容器</span></span><br><span class="line">refreshContext(context);</span><br></pre></td></tr></table></figure><p>其中，创建容器容器的方法是createApplicationContext，createApplicationContext方法会根据当前启动类型去初始化不同的Spring容器，主要类型为以下三种：</p><ul><li>NONE：非WEB，普通应用程序</li><li>REACTIVE：反应堆栈Web容器(5.x新加)</li><li>SERVLET：Web容器</li></ul><p>ps:反应堆栈Web容器，即WebFlux框架，该框架是Spring 5.x新加的框架，详细内容请访问SpringCloud中文网：<a href="https://springcloud.cc/web-reactive.html" target="_blank" rel="noopener">https://springcloud.cc/web-reactive.html</a></p><h3 id="prepareContext"><a href="#prepareContext" class="headerlink" title="prepareContext"></a>prepareContext</h3><p>prepareContext方法是做context的准备工作，该方法主要对容器进行一些预设置，源码中，该方法中的postProcessApplicationContext方法向beanFactory中添加了一个beanNameGenerator：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">postProcessApplicationContext</span><span class="params">(ConfigurableApplicationContext context)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span>.beanNameGenerator != <span class="keyword">null</span>) &#123;</span><br><span class="line">			context.getBeanFactory().registerSingleton(</span><br><span class="line">					AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR,</span><br><span class="line">					<span class="keyword">this</span>.beanNameGenerator);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span>.resourceLoader != <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">if</span> (context <span class="keyword">instanceof</span> GenericApplicationContext) &#123;</span><br><span class="line">				((GenericApplicationContext) context)</span><br><span class="line">						.setResourceLoader(<span class="keyword">this</span>.resourceLoader);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> (context <span class="keyword">instanceof</span> DefaultResourceLoader) &#123;</span><br><span class="line">				((DefaultResourceLoader) context)</span><br><span class="line">						.setClassLoader(<span class="keyword">this</span>.resourceLoader.getClassLoader());</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure><p>其中，BeanNameGenerator用来生成扫描到的Bean在容器中的名字。</p><p>在prepareContext方法中，applyInitializers也是一个颇为重要的内容，通过查询资料发现该方法主要是对已创建的并且未被刷新的容器进行设置的自定义应用上下文初始化器。</p><h3 id="refreshContext"><a href="#refreshContext" class="headerlink" title="refreshContext"></a>refreshContext</h3><p>通过跟踪refreshContext方法不难发现，其最终执行的是AbstractRefreshableApplicationContext类中的refresh方法，其源码如下：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">refresh</span><span class="params">()</span> <span class="keyword">throws</span> BeansException, IllegalStateException </span>&#123;</span><br><span class="line">        Object var1 = <span class="keyword">this</span>.startupShutdownMonitor;</span><br><span class="line">        <span class="keyword">synchronized</span>(<span class="keyword">this</span>.startupShutdownMonitor) &#123;</span><br><span class="line">         <span class="comment">// 为应用上下文的刷新做准备--设置时间、记录刷新日志、初始化属性源中的占位符(事实上什么都没做)和验证必 要的属性等</span></span><br><span class="line">            <span class="keyword">this</span>.prepareRefresh();</span><br><span class="line">            <span class="comment">// 让子类刷新内部的bean factory</span></span><br><span class="line">            ConfigurableListableBeanFactory beanFactory = <span class="keyword">this</span>.obtainFreshBeanFactory();</span><br><span class="line">            <span class="comment">//为上下文准备bean factory</span></span><br><span class="line">            <span class="keyword">this</span>.prepareBeanFactory(beanFactory);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// bean factory 后置处理</span></span><br><span class="line">                <span class="keyword">this</span>.postProcessBeanFactory(beanFactory);</span><br><span class="line">                <span class="comment">// 调用应用上下文中作为bean注册的工厂处理器</span></span><br><span class="line">                <span class="keyword">this</span>.invokeBeanFactoryPostProcessors(beanFactory);</span><br><span class="line">                <span class="comment">// 注册拦截创建bean的bean处理器</span></span><br><span class="line">                <span class="keyword">this</span>.registerBeanPostProcessors(beanFactory);</span><br><span class="line">                <span class="comment">// 初始化消息源</span></span><br><span class="line">                <span class="keyword">this</span>.initMessageSource();</span><br><span class="line">                <span class="comment">// 初始化事件广播</span></span><br><span class="line">                <span class="keyword">this</span>.initApplicationEventMulticaster();</span><br><span class="line">                <span class="comment">// 初始化特定上下文子类中的其它bean</span></span><br><span class="line">                <span class="keyword">this</span>.onRefresh();</span><br><span class="line">                <span class="comment">// 注册监听器bean</span></span><br><span class="line">                <span class="keyword">this</span>.registerListeners();</span><br><span class="line">                 <span class="comment">// 实例化所有的单例bean</span></span><br><span class="line">                <span class="keyword">this</span>.finishBeanFactoryInitialization(beanFactory);</span><br><span class="line">                 <span class="comment">// 发布相应的事件</span></span><br><span class="line">                <span class="keyword">this</span>.finishRefresh();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (BeansException var9) &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">this</span>.logger.isWarnEnabled()) &#123;</span><br><span class="line">                    <span class="keyword">this</span>.logger.warn(<span class="string">"Exception encountered during context initialization - cancelling refresh attempt: "</span> + var9);</span><br><span class="line">                &#125;</span><br><span class="line">			 <span class="comment">//销毁错误的资源</span></span><br><span class="line">                <span class="keyword">this</span>.destroyBeans();</span><br><span class="line">                <span class="comment">//重置刷新标志</span></span><br><span class="line">                <span class="keyword">this</span>.cancelRefresh(var9);</span><br><span class="line">                <span class="keyword">throw</span> var9;</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                <span class="keyword">this</span>.resetCommonCaches();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure><p>从以上代码的注释，可以看出refresh方法是Spring容器初始化的过程中加载Bean至关重要的一环，其职责主要是获取Bean，并初始化Bean。</p></div><div><div><div style="text-align:center;color:#ccc;font-size:14px">-------------本文结束感谢您的阅读-------------</div></div></div><footer class="post-footer"><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/java-mxdxsj-sjyz/" rel="next" title="面向对象设计与设计原则"><i class="fa fa-chevron-left"></i> 面向对象设计与设计原则</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"><a href="/java-spring-hexinyuanli/" rel="prev" title="Spring核心原理">Spring核心原理<i class="fa fa-chevron-right"></i></a></div></div></footer></div></article><div class="post-spread"></div></div></div><div class="comments" id="comments"><div id="gitment-container"></div></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div id="sidebar-dimmer"></div><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">文章目录</li><li class="sidebar-nav-overview" data-target="site-overview-wrap">站点概览</li></ul><section class="site-overview-wrap sidebar-panel"><div class="site-overview"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Jarome Jiang"><p class="site-author-name" itemprop="name">Jarome Jiang</p><p class="site-description motion-element" itemprop="description">平凡的脚步也可以走出伟大的行程</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">8</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/index.html"><span class="site-state-item-count">5</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/index.html"><span class="site-state-item-count">8</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/jiangliuhong" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="mailto:ja_rome@163.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i> E-Mail</a></span><span class="links-of-author-item"><a href="https://gitee.com/jiangliuhong" target="_blank" title="Gitee"><i class="fa fa-fw fa-git-square"></i> Gitee</a></span><span class="links-of-author-item"><a href="http://blog.csdn.net/jlh912008548" target="_blank" title="CSDN"><i class="fa fa-fw fa-crosshairs"></i> CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-block"><div class="links-of-blogroll-title"><i class="fa fa-fw fa-link"></i> 友情链接</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"><a href="https://blog.csdn.net/jlh912008548" title="ja.rome" target="_blank">ja.rome</a></li><li class="links-of-blogroll-item"><a href="https://blinkfox.github.io/" title="闪烁之狐" target="_blank">闪烁之狐</a></li><li class="links-of-blogroll-item"><a href="http://luokangyuan.com/" title="码酱博客" target="_blank">码酱博客</a></li><li class="links-of-blogroll-item"><a href="https://blog.csdn.net/puhaiyang" title="静下心来静下心来" target="_blank">静下心来静下心来</a></li></ul></div></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc"><div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SpringApplicationContext初始化过程"><span class="nav-number">1.</span> <span class="nav-text">SpringApplicationContext初始化过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ContextLoaderListener"><span class="nav-number">1.1.</span> <span class="nav-text">ContextLoaderListener</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SpringBoot中的Spring"><span class="nav-number">1.2.</span> <span class="nav-text">SpringBoot中的Spring</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#prepareContext"><span class="nav-number">1.2.1.</span> <span class="nav-text">prepareContext</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#refreshContext"><span class="nav-number">1.2.2.</span> <span class="nav-text">refreshContext</span></a></li></ol></li></ol></li></ol></div></div></section></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"><div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2019</span><span class="with-love"><i class="fa fa-user"></i></span> <span class="author" itemprop="copyrightHolder">Jarome Jiang</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-area-chart"></i></span> <span class="post-meta-item-text">Site words total count&#58;</span> <span title="Site words total count">18.9k</span></div><div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div><span class="post-meta-divider">|</span><div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div><div class="theme-info"><div class="powered-by"></div><span class="post-count">博客全站共18.9k字</span></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i></div></div><script>"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script src="/lib/jquery/index.js?v=2.1.3"></script><script src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script><script src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script><script src="/lib/velocity/velocity.min.js?v=1.2.1"></script><script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script><script src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script><script src="/js/src/utils.js?v=5.1.4"></script><script src="/js/src/motion.js?v=5.1.4"></script><script src="/js/src/scrollspy.js?v=5.1.4"></script><script src="/js/src/post-details.js?v=5.1.4"></script><script src="/js/src/bootstrap.js?v=5.1.4"></script><link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css"><script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script><script>function renderGitment(){new Gitmint({id:window.location.pathname,owner:"jiangliuhong",repo:"gitment",lang:navigator.language||navigator.systemLanguage||navigator.userLanguage,oauth:{proxy_gateway:"https://github.com/aimingoo/intersect",client_id:"6f449cdea62eeb2a307a"}}).render("gitment-container")}renderGitment()</script><script>// Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('-1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });</script></body><script src="/js/src/clipboard.min.js"></script><script src="/js/src/clipboard-use.js"></script></html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html><html class="theme-next mist use-motion" lang="zh-Hans"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta name="theme-color" content="#222"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet"><link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet"><link href="/css/main.css?v=5.1.4" rel="stylesheet"><link rel="icon" type="image/png" sizes="16x16" href="/images/java_icon.ico?v=5.1.4"><meta name="keywords" content="Java,Spring,"><meta name="description" content="Spring核心原理 在Spring中拥有许多的组件，但核心部分主要为：Beans、Core、Context、Expression，其中最为主要的为Core、与Beans，它们提供了最为核心的IOC和依赖注入功能。下文主要从这两个着手进行说明。  设计思想Spring5架构图：  Spring框架设计理念 在Spring框架中，其最核心组件应属Beans，Spring-Beans模块是所有应用都必"><meta name="keywords" content="Java,Spring"><meta property="og:type" content="article"><meta property="og:title" content="Spring核心原理"><meta property="og:url" content="http://yoursite.com/java-spring-hexinyuanli/index.html"><meta property="og:site_name" content="编程常青树"><meta property="og:description" content="Spring核心原理 在Spring中拥有许多的组件，但核心部分主要为：Beans、Core、Context、Expression，其中最为主要的为Core、与Beans，它们提供了最为核心的IOC和依赖注入功能。下文主要从这两个着手进行说明。  设计思想Spring5架构图：  Spring框架设计理念 在Spring框架中，其最核心组件应属Beans，Spring-Beans模块是所有应用都必"><meta property="og:locale" content="zh-Hans"><meta property="og:image" content="https://img-blog.csdn.net/20181018212051213?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2psaDkxMjAwODU0OA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"><meta property="og:image" content="https://img-blog.csdn.net/20181018212106877?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2psaDkxMjAwODU0OA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"><meta property="og:image" content="https://img-blog.csdn.net/20181018212125722?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2psaDkxMjAwODU0OA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"><meta property="og:updated_time" content="2019-05-24T15:41:32.000Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Spring核心原理"><meta name="twitter:description" content="Spring核心原理 在Spring中拥有许多的组件，但核心部分主要为：Beans、Core、Context、Expression，其中最为主要的为Core、与Beans，它们提供了最为核心的IOC和依赖注入功能。下文主要从这两个着手进行说明。  设计思想Spring5架构图：  Spring框架设计理念 在Spring框架中，其最核心组件应属Beans，Spring-Beans模块是所有应用都必"><meta name="twitter:image" content="https://img-blog.csdn.net/20181018212051213?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2psaDkxMjAwODU0OA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"><script id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Mist",version:"5.1.4",sidebar:{position:"left",display:"always",offset:12,b2t:!1,scrollpercent:!1,onmobile:!0},fancybox:!0,tabs:!0,motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},duoshuo:{userId:"0",author:"博主"},algolia:{applicationID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}}}</script><link rel="canonical" href="http://yoursite.com/java-spring-hexinyuanli/"><script>!function(e,t,o,c,i,a,n){e.DaoVoiceObject=i,e[i]=e[i]||function(){(e[i].q=e[i].q||[]).push(arguments)},e[i].l=1*new Date,a=t.createElement(o),n=t.getElementsByTagName(o)[0],a.async=1,a.src=c,a.charset="utf-8",n.parentNode.insertBefore(a,n)}(window,document,"script",("https:"==document.location.protocol?"https:":"http:")+"//widget.daovoice.io/widget/0f81ff2f.js","daovoice"),daovoice("init",{app_id:"5b52c3f9"}),daovoice("update")</script><title>Spring核心原理 | 编程常青树</title></head><script src="/js/src/love.js"></script><body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans"><div class="container sidebar-position-left page-post-detail"><div class="headband"></div><header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">编程常青树</span><span class="logo-line-after"><i></i></span></a></div><p class="site-subtitle"></p></div><div class="site-nav-toggle"><button><span class="btn-bar"></span><span class="btn-bar"></span><span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i><br>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于</a></li><li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger"><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class="site-search"><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class="search-icon"><i class="fa fa-search"></i></span><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span><div class="local-search-input-wrapper"><input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input"></div></div><div id="local-search-result"></div></div></div></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope itemtype="http://schema.org/Article"><div class="post-block"><link itemprop="mainEntityOfPage" href="http://yoursite.com/java-spring-hexinyuanli/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="name" content="Jarome Jiang"><meta itemprop="description" content><meta itemprop="image" content="/images/avatar.jpg"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="编程常青树"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Spring核心原理</h1><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-18T21:52:08+08:00">2018-10-18</time></span> <span class="post-category"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a></span> ， <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a></span></span> <span class="post-comments-count"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span><a href="/java-spring-hexinyuanli/#comments" itemprop="discussionUrl"><span class="post-comments-count gitment-comments-count" data-xid="/java-spring-hexinyuanli/" itemprop="commentsCount"></span></a></span><div class="post-tags"><a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a><a href="/tags/Spring/" rel="tag"><i class="fa fa-tag"></i> Spring</a></div><div class="post-wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">字数统计&#58;</span> <span title="字数统计">2.7k</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span title="阅读时长">10</span></div></div></header><div class="post-body" itemprop="articleBody"><h1 id="Spring核心原理"><a href="#Spring核心原理" class="headerlink" title="Spring核心原理"></a>Spring核心原理</h1><blockquote><p>在Spring中拥有许多的组件，但核心部分主要为：Beans、Core、Context、Expression，其中最为主要的为Core、与Beans，它们提供了最为核心的IOC和依赖注入功能。下文主要从这两个着手进行说明。</p></blockquote><h2 id="设计思想"><a href="#设计思想" class="headerlink" title="设计思想"></a>设计思想</h2><p>Spring5架构图：</p><p><img src="https://img-blog.csdn.net/20181018212051213?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2psaDkxMjAwODU0OA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="Spring5架构图"></p><p>Spring框架设计理念</p><p>在Spring框架中，其最核心组件应属Beans，Spring-Beans模块是所有应用都必须使用的，它包含了访问配置文件、创建和管理Bean以及进行控制反转(<code>IOC</code>，Inversion of Control)、依赖注入(<code>DI</code>,Dependency Injection)操作相关的所有类。</p><p>在IBM developerWorks一文中(<a href="https://www.ibm.com/developerworks/cn/java/j-lo-spring-principle/index.html" target="_blank" rel="noopener">https://www.ibm.com/developerworks/cn/java/j-lo-spring-principle/index.html</a>)这样说道：Spring就是面向Bean编程（BOP,Bean Oriented Programming），Bean 在 Spring 中才是真正的主角。</p><h2 id="Bean生命周期"><a href="#Bean生命周期" class="headerlink" title="Bean生命周期"></a>Bean生命周期</h2><blockquote><p>在Spring中Bean贯穿整个Spring应用，其生命周期应是从Spring容器创建后开始，直至Spring容器主动或被动销毁Bean。</p></blockquote><p>在Spring中，Bean默认为单例模式，即singleton属性默认为false，从BeanFactory中取得的Bean实例为在其初始化就产生一个新的对象，而不是每次获取的时候都产出一个新的对象。当然我们也可以在初始化Bean的时候设置其singleton属性为true，使这个Bean变成多例模式，在getBean的时候，Spring都会产出一个新的对象，类似于Java的中的new Object操作。但设置其为多例，应避免多线程同时存取共享资源所引发的数据不同步问题。</p><p>然后在Spring中，一个Bean从创建到销毁，大致需要经历一下几个步骤（其具体的实现方式，将在下放继续阐述）：</p><ol><li>实例化Bean，根据Spring配置，执行包扫描操作，并对其进行实例化操作。</li><li>根据Spring上线文对实例化的Bean进行配置，其中包括依赖注入。</li><li>判断是否实现了BeanNameAware接口，如果有会执行setBeanName方法去设置这个Bean的id，即自己设置Bean在BeanFactory中的名字。</li><li>判断是否实现了BeanFactoryAware接口，如果有则执行setBeanFactory方法，使得Bean可以获取自己的工厂，从而可以使用工厂的getBean方法。</li><li>判断是否实现了ApplicationContextAware接口，如果有则执行setApplicationContext方法，使得在Bean中可以获取Spring上下文，从而可以获取通过上下文去getBean，该步骤与上一步作用大致相同，但通过该中方式能实现的功能却更加丰富。</li><li>判断是否实现了BeanPostProcessor接口，如果有则调用postProcessBeforeInitialization方法，这一步属于实例化Bean的前置操作，在经过该步骤后，即Bean实例化后同样也会执行一个操作，详情见第八条。</li><li>判断Bean是否配置了init-method，如果有，在Bean初始化之后会默认执行一次init-method指定的方法。</li><li>判断Bean是否实现了BeanPostProcessor接口，如果有则调用postProcessAfterInitialization方法，该方法属于Bean实例化后的操作。在经过这个步骤后，Bean的初始化操作就完成了。</li><li>当Bean实例化完成后，当Bean不再被需要的时候会执行销毁操作。一般是在ApplicationContext执行close方法时会进行销毁操作。</li><li>在销毁过程中，判断是否实现了DisposableBean接口，如果有则执行destroy方法。</li><li>判断Bean是否配置了destroy-method，如果有，在销毁过程中会默认执行一次destroy-method方法。</li></ol><h2 id="Bean初始化过程"><a href="#Bean初始化过程" class="headerlink" title="Bean初始化过程"></a>Bean初始化过程</h2><p>在上一篇关于‘Spring初始化过程’的文章最后写到Spring初始化过程中最后执行的核心方法是AbstractRefreshableApplicationContext类的refresh方法。这里再次将其源码贴出.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">refresh</span><span class="params">()</span> <span class="keyword">throws</span> BeansException, IllegalStateException </span>&#123;</span><br><span class="line">		<span class="keyword">synchronized</span> (<span class="keyword">this</span>.startupShutdownMonitor) &#123;</span><br><span class="line">               <span class="comment">// 1.为应用上下文的刷新做准备--设置时间、记录刷新日志、初始化属性源中的占位符(事实上什么都没做)和验证必要的属性等</span></span><br><span class="line">			<span class="comment">// Prepare this context for refreshing.</span></span><br><span class="line">			prepareRefresh();</span><br><span class="line">			<span class="comment">// 2.让子类刷新内部的bean factory</span></span><br><span class="line">			<span class="comment">// Tell the subclass to refresh the internal bean factory.</span></span><br><span class="line">			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();</span><br><span class="line">            <span class="comment">//3.为上下文准备bean factory</span></span><br><span class="line">			<span class="comment">// Prepare the bean factory for use in this context.</span></span><br><span class="line">			prepareBeanFactory(beanFactory);</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">                 <span class="comment">// 4.bean factory 后置处理</span></span><br><span class="line">				<span class="comment">// Allows post-processing of the bean factory in context subclasses.</span></span><br><span class="line">				postProcessBeanFactory(beanFactory);</span><br><span class="line">				<span class="comment">// 5.调用应用上下文中作为bean注册的工厂处理器</span></span><br><span class="line">				<span class="comment">// Invoke factory processors registered as beans in the context.</span></span><br><span class="line">				invokeBeanFactoryPostProcessors(beanFactory);</span><br><span class="line">				<span class="comment">// 6.注册拦截创建bean的bean处理器</span></span><br><span class="line">				<span class="comment">// Register bean processors that intercept bean creation.</span></span><br><span class="line">				registerBeanPostProcessors(beanFactory);</span><br><span class="line">				 <span class="comment">// 7.初始化消息源</span></span><br><span class="line">				<span class="comment">// Initialize message source for this context.</span></span><br><span class="line">				initMessageSource();</span><br><span class="line">				 <span class="comment">// 8.初始化事件广播</span></span><br><span class="line">				<span class="comment">// Initialize event multicaster for this context.</span></span><br><span class="line">				initApplicationEventMulticaster();</span><br><span class="line">				<span class="comment">// 9.初始化特定上下文子类中的其它bean</span></span><br><span class="line">				<span class="comment">// Initialize other special beans in specific context subclasses.</span></span><br><span class="line">				onRefresh();</span><br><span class="line">				 <span class="comment">// 10.注册监听器bean</span></span><br><span class="line">				<span class="comment">// Check for listener beans and register them.</span></span><br><span class="line">				registerListeners();</span><br><span class="line">				<span class="comment">// 11.实例化所有的单例bean</span></span><br><span class="line">				<span class="comment">// Instantiate all remaining (non-lazy-init) singletons.</span></span><br><span class="line">				finishBeanFactoryInitialization(beanFactory);</span><br><span class="line"> 				<span class="comment">// 12.发布相应的事件</span></span><br><span class="line">				<span class="comment">// Last step: publish corresponding event.</span></span><br><span class="line">				finishRefresh();</span><br><span class="line">			&#125;<span class="keyword">catch</span> (BeansException ex) &#123;</span><br><span class="line">				<span class="keyword">if</span> (logger.isWarnEnabled()) &#123;</span><br><span class="line">					logger.warn(<span class="string">"Exception encountered during context initialization - "</span> +</span><br><span class="line">							<span class="string">"cancelling refresh attempt: "</span> + ex);</span><br><span class="line">				&#125;</span><br><span class="line">				 <span class="comment">//销毁错误的资源</span></span><br><span class="line">				<span class="comment">// Destroy already created singletons to avoid dangling resources.</span></span><br><span class="line">				destroyBeans();</span><br><span class="line">				<span class="comment">//重置刷新标志</span></span><br><span class="line">				<span class="comment">// Reset 'active' flag.</span></span><br><span class="line">				cancelRefresh(ex);</span><br><span class="line">				<span class="comment">//主动抛出异常</span></span><br><span class="line">				<span class="comment">// Propagate exception to caller.</span></span><br><span class="line">				<span class="keyword">throw</span> ex;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">finally</span> &#123;</span><br><span class="line">                <span class="comment">//重置内存缓存</span></span><br><span class="line">				<span class="comment">// Reset common introspection caches in Spring's core, since we</span></span><br><span class="line">				<span class="comment">// might not ever need metadata for singleton beans anymore...</span></span><br><span class="line">				resetCommonCaches();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure><p>通过源码可以看出该方法是构建整个IOC容器的完成过程。其中每一行代码都是创建容器的一个流程。其中主要包括以下几个步骤：</p><ol><li>构建BeanFactory</li><li>添加事件处理</li><li>创建 Bean 实例对象并构建Bean关系</li><li>触发被监听的事件</li></ol><h3 id="构建BeanFactory"><a href="#构建BeanFactory" class="headerlink" title="构建BeanFactory"></a>构建BeanFactory</h3><p>构建BeanFactory的操作主要包括步骤1、2、3。其中第一步在我看来并未做啥重要的事情，我们只需将焦点定在二三步即可。</p><p>在第二步中，obtainFreshBeanFactory方法主要调用了AbstractRefreshableApplicationContext#refreshBeanFactory方法：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">refreshBeanFactory</span><span class="params">()</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (hasBeanFactory()) &#123;</span><br><span class="line">			destroyBeans();</span><br><span class="line">			closeBeanFactory();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			DefaultListableBeanFactory beanFactory = createBeanFactory();</span><br><span class="line">			beanFactory.setSerializationId(getId());</span><br><span class="line">			customizeBeanFactory(beanFactory);</span><br><span class="line">			loadBeanDefinitions(beanFactory);</span><br><span class="line">			<span class="keyword">synchronized</span> (<span class="keyword">this</span>.beanFactoryMonitor) &#123;</span><br><span class="line">				<span class="keyword">this</span>.beanFactory = beanFactory;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">catch</span> (IOException ex) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> ApplicationContextException(<span class="string">"I/O error parsing bean definition source for "</span> + getDisplayName(), ex);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure><p>在上述代码中清晰可见的说明了BeanFactory的创建过程，首先判断当前容器是否存在BeanFactory，如果有则销毁后在进行创建。通过try/catch中代码可见，BeanFactory的是DefaultListableBeanFactory的实例对象。</p><p>通过Idea查看DefaultListableBeanFactory的类图如下：</p><p><img src="https://img-blog.csdn.net/20181018212106877?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2psaDkxMjAwODU0OA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p><p>从这个图中发现除了 BeanFactory 相关的类外，还发现了与 Bean 的 register 相关。这在 refreshBeanFactory 方法中有一行 loadBeanDefinitions(beanFactory) 将找到答案，这个方法将开始加载、解析 Bean 的定义，也就是把用户定义的数据结构转化为 Ioc 容器中的特定数据结构。</p><p>对于WEB应用而言，其调用的是XmlWebApplicationContext#loadBeanDefinitions方法。</p><p>在BeanFactory创建成功后，Spring将创建的对象交于第三步，即prepareBeanFactory方法为其添加一些 Spring 本身需要的一些工具类。</p><h3 id="添加事件处理"><a href="#添加事件处理" class="headerlink" title="添加事件处理"></a>添加事件处理</h3><p>在第4、5、6步中，这三行代码对 Spring 的功能扩展性起了至关重要的作用 。其中第4、5步的代码主要是让你可以在Bean已经被创建，但未被初始化之前对已经构建的 BeanFactory 的配置做修改；第6步代码主要是让你可以对以后再创建 Bean 的实例对象时添加一些自定义的操作 。</p><p>第4步，即postProcessBeanFactory方法。主要功能为允许上下文能对BeanFactory做一些处理。比如：AbstractRefreshableWebApplicationContext抽象类实现了该方法，并在方法中对Servlet做了一些处理。</p><p>第5步，即invokeBeanFactoryPostProcessors方法主要是获取实现 BeanFactoryPostProcessor 接口的子类。其中主要包括执行BeanDefinitionRegistryPostProcessor类型的postProcessBeanDefinitionRegistry方法，以及执行非BeanDefinitionRegistryPostProcessor类型的postProcessBeanFactory方法。当然，该方法传入的参数是ConfigurableListableBeanFactory 类型，我们仅能对BeanFactory的一些配置做修改。</p><p>第6步，即registerBeanPostProcessors 方法也是可以获取用户定义的实现了 BeanPostProcessor 接口的子类，并执行把它们注册到 BeanFactory 对象中的 beanPostProcessors 变量中。BeanPostProcessor 中声明了两个方法：postProcessBeforeInitialization、postProcessAfterInitialization 分别用于在 Bean 对象初始化时执行。可以执行用户自定义的操作。</p><p>第7、8、9、10步的方法主要是初始化监听事件和对系统的其他监听者的注册，监听者必须是 ApplicationListener 的子类。 在容器启动时，Spring会调用ApplicationStartListener的onApplicationEvent方法。</p><h3 id="创建-Bean-实例对象并构建Bean关系"><a href="#创建-Bean-实例对象并构建Bean关系" class="headerlink" title="创建 Bean 实例对象并构建Bean关系"></a>创建 Bean 实例对象并构建Bean关系</h3><p>Bean的实例化过程是第11步开始的，即finishBeanFactoryInitialization方法，而在finishBeanFactoryInitialization方法中核心方法又为preInstantiateSingletons（DefaultListableBeanFactory类）。在该方法中，首先拿到所有beanName，然后在实例化的时候会判断bean是否为FactoryBean，顾名思义，这是一个特殊的工厂Bean，可以产生Bean的Bean。</p><p>这里的产生 Bean 是指 Bean 的实例，如果一个类继承 FactoryBean 用户只要实现他的 getObject 方法，就可以自己定义产生实例对象的方法。然而在 Spring 内部这个 Bean 的实例对象是 FactoryBean，通过调用这个对象的 getObject 方法就能获取用户自定义产生的对象，从而为 Spring 提供了很好的扩展性。Spring 获取 FactoryBean 本身的对象是在前面加上 &amp; 来完成的。</p><p>在Bean的实例化主要分两个步骤：</p><ul><li>Bean不为抽象、单例、非懒加载。<ul><li>判断Bean是否为FactoryBean，是则执行FactoryBean相关的操作，否则直接调用getBean方法产生实例。</li></ul></li><li>在singleton的bean初始化完了之后调用SmartInitializingSingleton的afterSingletonsInstantiated方法。</li></ul><p>通过跟进Bean实例化代码可以发现getBean方法最后指向的是AbstractBeanFactory类的抽象方法createBean，其实现类为AbstractAutowireCapableBeanFactory。在该方法中有一个步骤会去查找Bean的依赖关系，并对其进行依赖注入操作。这里画一个时序图来作说明。</p><p><img src="https://img-blog.csdn.net/20181018212125722?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2psaDkxMjAwODU0OA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p><p>需要注意的是，在resolveValueIfNecessary方法中，不仅有调用resolveReference，同样的还有resolveInnerBean，即解析内部的Bean引用。</p><h3 id="触发被监听的事件"><a href="#触发被监听的事件" class="headerlink" title="触发被监听的事件"></a>触发被监听的事件</h3><p>在经历第11步后，上下文的创建就已经基本完成了，这时Spring会执行finishRefresh方法，完成此上下文的刷新。其中包括LifecycleProcessor的onRefresh方法，并执行ContextRefreshedEvent事件。例如：执行SpringMVC的事件。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在Bean声明周期中曾讲到，Spring在初始化Bean的时候先后对调用BeanPostProcessor接口的postProcessBeforeInitialization、postProcessAfterInitialization方法。利用这一特性我们可以在Bean中实现BeanPostProcessor接口，然后再方法体中加入自己的逻辑。</p><p>对于Spring的IOC容器而言，除了BeanPostProcessor，还有BeanFactoryPostProcessor。顾明思议，BeanFactoryPostProcessor是在构建BeanFactory和构建Bean对象时调用。IOC容器允许BeanFactoryPostProcessor在容器初始化任何Bean之前对BeanFactory配置进行修改。</p><p>在Spring的IOC容器中还有一个特殊的Bean，即FactoryBean，FactoryBean主要用于初始化其他Bean，我们可以自己实现一个FactoryBean，然后添加自定义实例化逻辑。在Spring中，AOP、ORM、事务管理等都是依靠FactoryBean的扩展来实现的。</p></div><div><div><div style="text-align:center;color:#ccc;font-size:14px">-------------本文结束感谢您的阅读-------------</div></div></div><footer class="post-footer"><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/java-spring-context-chushihua/" rel="next" title="SpringApplicationContext初始化过程"><i class="fa fa-chevron-left"></i> SpringApplicationContext初始化过程</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"><a href="/server-nginx-peizhi/" rel="prev" title="nginx配置">nginx配置<i class="fa fa-chevron-right"></i></a></div></div></footer></div></article><div class="post-spread"></div></div></div><div class="comments" id="comments"><div id="gitment-container"></div></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div id="sidebar-dimmer"></div><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">文章目录</li><li class="sidebar-nav-overview" data-target="site-overview-wrap">站点概览</li></ul><section class="site-overview-wrap sidebar-panel"><div class="site-overview"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Jarome Jiang"><p class="site-author-name" itemprop="name">Jarome Jiang</p><p class="site-description motion-element" itemprop="description">平凡的脚步也可以走出伟大的行程</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">8</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/index.html"><span class="site-state-item-count">5</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/index.html"><span class="site-state-item-count">8</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/jiangliuhong" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="mailto:ja_rome@163.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i> E-Mail</a></span><span class="links-of-author-item"><a href="https://gitee.com/jiangliuhong" target="_blank" title="Gitee"><i class="fa fa-fw fa-git-square"></i> Gitee</a></span><span class="links-of-author-item"><a href="http://blog.csdn.net/jlh912008548" target="_blank" title="CSDN"><i class="fa fa-fw fa-crosshairs"></i> CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-block"><div class="links-of-blogroll-title"><i class="fa fa-fw fa-link"></i> 友情链接</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"><a href="https://blog.csdn.net/jlh912008548" title="ja.rome" target="_blank">ja.rome</a></li><li class="links-of-blogroll-item"><a href="https://blinkfox.github.io/" title="闪烁之狐" target="_blank">闪烁之狐</a></li><li class="links-of-blogroll-item"><a href="http://luokangyuan.com/" title="码酱博客" target="_blank">码酱博客</a></li><li class="links-of-blogroll-item"><a href="https://blog.csdn.net/puhaiyang" title="静下心来静下心来" target="_blank">静下心来静下心来</a></li></ul></div></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc"><div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring核心原理"><span class="nav-number">1.</span> <span class="nav-text">Spring核心原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#设计思想"><span class="nav-number">1.1.</span> <span class="nav-text">设计思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bean生命周期"><span class="nav-number">1.2.</span> <span class="nav-text">Bean生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bean初始化过程"><span class="nav-number">1.3.</span> <span class="nav-text">Bean初始化过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#构建BeanFactory"><span class="nav-number">1.3.1.</span> <span class="nav-text">构建BeanFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加事件处理"><span class="nav-number">1.3.2.</span> <span class="nav-text">添加事件处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建-Bean-实例对象并构建Bean关系"><span class="nav-number">1.3.3.</span> <span class="nav-text">创建 Bean 实例对象并构建Bean关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#触发被监听的事件"><span class="nav-number">1.3.4.</span> <span class="nav-text">触发被监听的事件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div></div></section></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"><div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2019</span><span class="with-love"><i class="fa fa-user"></i></span> <span class="author" itemprop="copyrightHolder">Jarome Jiang</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-area-chart"></i></span> <span class="post-meta-item-text">Site words total count&#58;</span> <span title="Site words total count">18.9k</span></div><div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div><span class="post-meta-divider">|</span><div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div><div class="theme-info"><div class="powered-by"></div><span class="post-count">博客全站共18.9k字</span></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i></div></div><script>"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script src="/lib/jquery/index.js?v=2.1.3"></script><script src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script><script src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script><script src="/lib/velocity/velocity.min.js?v=1.2.1"></script><script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script><script src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script><script src="/js/src/utils.js?v=5.1.4"></script><script src="/js/src/motion.js?v=5.1.4"></script><script src="/js/src/scrollspy.js?v=5.1.4"></script><script src="/js/src/post-details.js?v=5.1.4"></script><script src="/js/src/bootstrap.js?v=5.1.4"></script><link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css"><script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script><script>function renderGitment(){new Gitmint({id:window.location.pathname,owner:"jiangliuhong",repo:"gitment",lang:navigator.language||navigator.systemLanguage||navigator.userLanguage,oauth:{proxy_gateway:"https://github.com/aimingoo/intersect",client_id:"6f449cdea62eeb2a307a"}}).render("gitment-container")}renderGitment()</script><script>// Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('-1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });</script></body><script src="/js/src/clipboard.min.js"></script><script src="/js/src/clipboard-use.js"></script></html>
