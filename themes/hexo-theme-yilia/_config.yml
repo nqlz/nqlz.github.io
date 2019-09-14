@@ -3,8 +3,8 @@
 menu:
   主页: /
   随笔: /tags/随笔/
-  Java: /categories/Java/
-
+  归档: /archives/
+  分类: /categories/
 # SubNav
 subnav:
   github: "https://github.com/nqlz"
@@ -12,7 +12,7 @@ subnav:
 #  rss: "#"
 #  zhihu: "#"
   #qq: "#"
-  #weixin: "#"
+  # weixin: "16608850369"
   #jianshu: "#"
   #douban: "#"
   #segmentfault: "#"

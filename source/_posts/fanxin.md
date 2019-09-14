@@ -3,6 +3,9 @@ title: 泛型的一些总结
 date: 2019-09-14 11:33:22
 tags: Java基础
 toc: true
+categories: 
+  - Java
+  - Java基础
 ---
 
 
