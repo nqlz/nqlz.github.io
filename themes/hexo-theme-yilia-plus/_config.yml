@@ -105,13 +105,13 @@ disqus: false
 
 # 3、Gitment----基于GitHub的评论系统(关闭请设置gitment_owner为false)
 # 关于如何集成:https://www.jianshu.com/p/ac7658cc912f
-gitment_owner: false      #你的 GitHub ID
+gitment_owner: nqlz      #你的 GitHub ID
 # 是否使用官方js(false可以提升访问速度，本地修改过一部分的js，官方js可能会出现服务器不稳定，不太建议使用)
 gitment_remote: false
-gitment_repo: ''          #存储评论的 repo name(需要在Github创建)
+gitment_repo: 'comment'          #存储评论的 repo name(需要在Github创建)
 gitment_oauth:
-  client_id: ''           #client ID
-  client_secret: ''       #client secret
+  client_id: '0c17cc8bf955cfddda55'           #client ID
+  client_secret: 'fee95e85965505b5a3ae8cff47c7c08923674b89'       #client secret
 
 # 4、Giteement----【国内用户建议使用这个，相对比较快】
 # 关于如何集成:https://www.jianshu.com/p/f5c4633524c7
@@ -120,15 +120,15 @@ giteement:
   enable: false  # 是否启用码云评论系统
   # 是否使用官方js(false可以提升访问速度)
   remote: false
-  redirect_uri: ''   # 应用回调地址(请和配置的第三方应用保持一致)
+  redirect_uri: 'https://nqlz.github.io/'   # 应用回调地址(请和配置的第三方应用保持一致)
   # 不能更改(网上开源项目https://github.com/Rob--W/cors-anywhere作者提供的专门用来跨域服务器的配置)
   oauth_uri: https://cors-anywhere.herokuapp.com/https://gitee.com/oauth/token
-  giteeID: ''  # 你的码云账号英文名
+  giteeID: 'nqlz'  # 你的码云账号英文名
   # 存储评论的 repo name(需要在码云仓库创建公开仓库)
-  repo: ''
+  repo: 'blog-comment'
   gitment_oauth:
-    client_id: ''           #client ID
-    client_secret: ''       #client secret
+    client_id: 'ae6e3d345bf4809173bbb26a4f9b7bbedc5246d3fe4a52fed0d59255bb72bee7'           #client ID
+    client_secret: 'efdaa2c08991bf011060dc4873ffc2185704e530b59f977e188ffff0229b5384'       #client secret
 
 # 访问量统计功能(不蒜子)
 busuanzi:
