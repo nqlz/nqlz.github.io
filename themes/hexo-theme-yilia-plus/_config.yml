@@ -84,7 +84,7 @@ baidu_analytics: ''
 google_analytics: ''
 
 # 网站图标
-favicon: https://docs.docker.com/v17.09/favicons/docs@2x.ico
+favicon: https://b-gold-cdn.xitu.io/favicons/v2/favicon-32x32.png
 
 # 你的头像url
 avatar: /img/20170906190027106.jpg
