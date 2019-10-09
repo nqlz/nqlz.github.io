@@ -10,48 +10,86 @@ categories:
 ---
 基于 Docker 安装 RocketMQ
 在此之前先搞定环境{% post_link docker-install-centos %}或者{% post_link docker-install-ubuntu %}
-安装rocketMQ 可参考https://www.jianshu.com/p/706588323276
-为了方便阅读查看笔记，在此直接copy过来，感谢鲁斯菲尔做的视频和笔记，笔者学习的时候也是看了许多他的教学视频，有兴趣的同学可以去哔哩哔哩搜索鲁斯菲尔即可找到。
+安装rocketMQ 可参考https://www.jianshu.com/p/706588323276  或者 https://www.cnblogs.com/qdhxhz/p/11096682.html
+为了方便阅读查看笔记，在此一部分直接copy过来，感谢鲁斯菲尔做的视频和笔记，笔者学习的时候也是看了许多他的教学视频，有兴趣的同学可以去哔哩哔哩搜索鲁斯菲尔即可找到。
+
+
 ## 编写docker-compose.yml
-docker-compose的版本不能太老，不然会报错
+docker-compose的版本不能太老，不然会报错，两个broker两个NameServer一个console
+线上不建议使用docker内部IP，问题太多
 <!-- more-->
 ```yaml
 version: '3.5'
 services:
-  rmqnamesrv:
+  rmqnamesrv-a:
     image: foxiswho/rocketmq:server
-    container_name: rmqnamesrv
+    container_name: rmqnamesrv-a
     ports:
       - 9876:9876
     volumes:
       - ./data/logs:/opt/logs
       - ./data/store:/opt/store
     networks:
-        rmq:
-          aliases:
-            - rmqnamesrv
+      rmq:
+        aliases:
+          - rmqnamesrv-a
+  rmqnamesrv-b:
+    image: foxiswho/rocketmq:server
+    container_name: rmqnamesrv-b
+    ports:
+      - 9877:9876
+    volumes:
+      - ./data/logs:/opt/logs
+      - ./data/store:/opt/store
+    networks:
+      rmq:
+        aliases:
+          - rmqnamesrv-b
 
-  rmqbroker:
+  rmqbroker-a:
     image: foxiswho/rocketmq:broker
-    container_name: rmqbroker
+    container_name: rmqbroker-a
+    ports:
+       - 11909:10909
+       - 11911:10911
+    volumes:
+      - ./data/logs:/opt/logs
+      - ./data/store:/opt/store
+      - ./broker-a.conf:/etc/rocketmq/broker.conf
+    environment:
+      NAMESRV_ADDR: "rmqnamesrv-a:9876;rmqnamesrv-b:9876"
+      JAVA_OPTS: " -Duser.home=/opt"
+      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
+    command: mqbroker -c /etc/rocketmq/broker.conf
+    depends_on:
+      - rmqnamesrv-a
+      - rmqnamesrv-b
+    networks:
+      rmq:
+        aliases:
+          - rmqbroker-a
+  rmqbroker-b:
+    image: foxiswho/rocketmq:broker
+    container_name: rmqbroker-b
     ports:
       - 10909:10909
       - 10911:10911
     volumes:
       - ./data/logs:/opt/logs
       - ./data/store:/opt/store
-      - ./data/brokerconf/broker.conf:/etc/rocketmq/broker.conf
+      - ./broker-b.conf:/etc/rocketmq/broker.conf
     environment:
-        NAMESRV_ADDR: "rmqnamesrv:9876"
-        JAVA_OPTS: " -Duser.home=/opt"
-        JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
+      NAMESRV_ADDR: "rmqnamesrv-a:9876;rmqnamesrv-b:9876"
+      JAVA_OPTS: " -Duser.home=/opt"
+      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
     command: mqbroker -c /etc/rocketmq/broker.conf
     depends_on:
-      - rmqnamesrv
+      - rmqnamesrv-a
+      - rmqnamesrv-b
     networks:
       rmq:
         aliases:
-          - rmqbroker
+          - rmqbroker-b
 
   rmqconsole:
     image: styletang/rocketmq-console-ng
@@ -59,9 +97,10 @@ services:
     ports:
       - 8080:8080
     environment:
-        JAVA_OPTS: "-Drocketmq.namesrv.addr=rmqnamesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
+      JAVA_OPTS: "-Drocketmq.namesrv.addr=rmqnamesrv-a:9876;rmqnamesrv-b:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
     depends_on:
-      - rmqnamesrv
+      - rmqnamesrv-b
+      - rmqnamesrv-a
     networks:
       rmq:
         aliases:
@@ -72,27 +111,14 @@ networks:
     name: rmq
     driver: bridge
 ```
-## 配置broker.conf
-RocketMQ Broker 需要一个配置文件，按照上面的 Compose 配置，我们需要在 ./data/brokerconf/ 目录下创建一个名为 broker.conf 的配置文件，内容如下：
-```lombok.config
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
 
+## 配置broker.conf
+RocketMQ Broker 需要一个配置文件，按照上面的 Compose 配置，我们需要在 ./data/brokerconf/ 目录下创建一个名为 broker.conf 的配置文件，
+因为是双主模式部署，所以会有两个broker.conf,这里暂且命名 broker-a.conf 和 broker-b.conf，内容如下：
+```lombok.config
 
 # 所属集群名字
-brokerClusterName=DefaultCluster
+brokerClusterName=rocketmq-cluster
 
 # broker 名字，注意此处不同的配置文件填写的不一样，如果在 broker-a.properties 使用: broker-a,
 # 在 broker-b.properties 使用: broker-b
@@ -101,8 +127,8 @@ brokerName=broker-a
 # 0 表示 Master，> 0 表示 Slave
 brokerId=0
 
-# nameServer地址，分号分割
-# namesrvAddr=rocketmq-nameserver1:9876;rocketmq-nameserver2:9876
+# nameServer地址，分号分割。注册到NameServer的地址，看到这里有两个地址，说明NameServer也是集群部署。
+# namesrvAddr=192.168.31.156:9876;192.168.31.156:9877
 
 # 启动IP,如果 docker 报 com.alibaba.rocketmq.remoting.exception.RemotingConnectException: connect to <192.168.0.120:10909> failed
 # 解决方式1 加上一句 producer.setVipChannelEnabled(false);，解决方式2 brokerIP1 设置宿主机IP，不要使用docker 内部IP
@@ -173,4 +199,4 @@ flushDiskType=ASYNC_FLUSH
 # pullMessageThreadPoolNums=128
 ```
 然后运行docker-compose up即可
-访问 http://rmqIP:8080 登入控制台
+访问 http://rmqIP:9001 登入控制台

@@ -73,7 +73,7 @@ sudo usermod -aG docker $USER
  sudo chmod +x /usr/local/bin/docker-compose
 ```
 如果以上方法不能docker-compose安装不成功，则用以下方法
-点  [这里](https://github.com/docker/compose/releases)  打开官网，网页拉到最下面,Assets下载对应平台的文件
+点  [github这里](https://github.com/docker/compose/releases)  打开官网，网页拉到最下面,Assets下载对应平台的文件
 以Linux为例，下载：[docker-compose-Linux-x86_64](https://github.com/docker/compose/releases/download/1.25.0-rc2/docker-compose-Linux-x86_64)
 然后将文件上传到 /usr/local/bin/ 文件夹下，然后将其重命名为docker-compose，修改此文件的权限，增加可执行：chmod +x /usr/local/bin/docker-compose
 然后再运行 
