@@ -1,0 +1,778 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+  <title>Hexo</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.10","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 100vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>张不让</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="张不让，一个背对众生的男子。他如同夜空中的彗星一般，华丽而神秘，他那忧郁的眼神，习惯45度角仰望天空，泪流满面。 而受冥王星的强烈影响，张不让无法像正常人一样，表达情感，这也使得他成为全村最神秘的存在。稻田里、池塘边、禾场上，都是他 转瞬即逝的灿烂背影，只有低调的耳钉和奢华的节奏才能告诉你，有一个叫做 张不让 的男人，他，存在于这个世界！">
+              
+            </span>
+
+            
+          </div>
+
+          
+            <div class="scroll-down-bar">
+              <i class="iconfont icon-arrowdown"></i>
+            </div>
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div class="py-5" id="board"
+          style=margin-top:0>
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/15/%E4%B8%B4%E6%B2%B3%E5%AD%A6%E9%92%93/" target="_self">
+          临河学钓
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/05/15/%E4%B8%B4%E6%B2%B3%E5%AD%A6%E9%92%93/" target="_self">
+          
+          
+            
+          
+             庚子三月十七临河学钓
+云高草木浅，雨霁峰吐烟。闲来学钓叟，端坐碧水边。林荫斜石板，暖阳邀与眠。百岁一须臾，梦还逍遥天！
+云头高高挂在天上，草木已浅浅发了新芽，雨过天晴后，山上雾气缭绕。得了闲正好又起了兴致就去学那垂钓的老翁，于是便端坐在这碧波荡漾的河水边钓鱼儿。林荫下的斜石板正是个入眠的好地处，这暖阳又恰巧照得我懒洋洋的想睡觉。人生百年不经意间也不过短短一刹就过去了，何苦烦恼度过，如此自在恣
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-15 00:18" pubdate>
+              2021-05-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%A1%8C%E5%B0%86%E5%B0%B1%E6%9C%A8/">行将就木</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/15/%E5%8F%8B%E9%87%8D%E6%B8%B8%E6%9C%89%E6%84%9F/" target="_self">
+          友重游有感
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/05/15/%E5%8F%8B%E9%87%8D%E6%B8%B8%E6%9C%89%E6%84%9F/" target="_self">
+          
+          
+            
+          
+          三五七言 . 感同学重游楚雄
+暑又往，寒又复。少年皆不复，青山还如故。对月曾长谈，把酒夜言欢。如今各家难付言，别来又销两三年！孤窗只影多惆怅，云遮望眼雁移双！犹忆当时指西山，说意气，谈风骨！他日当共履故地，洗彝海，撞福钟！
+
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-15 00:17" pubdate>
+              2021-05-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%A1%8C%E5%B0%86%E5%B0%B1%E6%9C%A8/">行将就木</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/15/%E6%82%94%E8%BF%87%E5%BD%95/" target="_self">
+          悔过录
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/05/15/%E6%82%94%E8%BF%87%E5%BD%95/" target="_self">
+          
+          
+            
+          
+                悔过录
+书生在灯下跳舞乞丐在夜场狂欢妓女与人说妇道商人同人讲良心屠夫说他晕血船夫说他怕水种地的嫌秋收太盛当官的嫌官位太高和尚他不爱念经樵夫他不爱砍柴厨子往菜里吐口水戏子往脸上贴面子老实的人颂盛世太平狡猾的人说世道艰难
+
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-15 00:16" pubdate>
+              2021-05-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%A1%8C%E5%B0%86%E5%B0%B1%E6%9C%A8/">行将就木</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/15/%E6%97%A0%E6%89%80%E9%A1%BE%E5%BF%8C/" target="_self">
+          无所顾忌
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/05/15/%E6%97%A0%E6%89%80%E9%A1%BE%E5%BF%8C/" target="_self">
+          
+          
+            
+          
+          他是多么羡慕那些能够一次入梦的人只有在深夜只有在下雨的深夜夜黑到看不见所有雨大到听不见所有他才能偶尔放肆给自己看就像今夜他赤裸着身体站在阳台边儿上看着黑漆漆的远方朝着横在面前的大山痛快地撒了一泡尿这个感觉真让他舒服没有人能够听见因为有雨落下的声音没有人能够看见因为所有人都已睡死下雨的黑夜总是让他无所顾忌
+
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-15 00:16" pubdate>
+              2021-05-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%A1%8C%E5%B0%86%E5%B0%B1%E6%9C%A8/">行将就木</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/15/%E5%8C%96%E4%BD%9C%E9%A3%8E/" target="_self">
+          化作风
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/05/15/%E5%8C%96%E4%BD%9C%E9%A3%8E/" target="_self">
+          
+          
+            
+          
+          我对着风说了一句悄悄话这阵风会穿过密林会越过高山这阵风终于会吹到你的耳畔悄悄地告诉你我想你了彼时那柔柔的拂过你的面庞的你要知道那不是风那是我灼热的鼻息那么贪婪的贴着你的身体的全部我偷笑的想像到你的害羞的心跳可是对不起因为此时的我也正彼时如你一样810
+
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-15 00:08" pubdate>
+              2021-05-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%A1%8C%E5%B0%86%E5%B0%B1%E6%9C%A8/">行将就木</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/15/%E4%B8%8B%E9%85%92%E8%8F%9C/" target="_self">
+          下酒菜
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/05/15/%E4%B8%8B%E9%85%92%E8%8F%9C/" target="_self">
+          
+          
+            
+          
+          哪有什么下酒的菜，为这么个人。给杯酒喝就已是尽了本分，就这都还是抹不下亲戚的面子，倘是换了另外一个这样的人，别说酒，根本连话都不会同他说几句，就晾在一旁，各做各的事，等他呆不下去了，自然便会离开。待人离去后，还不免唾几句嘴！
+
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-15 00:07" pubdate>
+              2021-05-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%A1%8C%E5%B0%86%E5%B0%B1%E6%9C%A8/">行将就木</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/15/%E5%90%AC%E8%99%AB%E5%90%9F/" target="_self">
+          听虫吟
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/05/15/%E5%90%AC%E8%99%AB%E5%90%9F/" target="_self">
+          
+          
+            
+          
+          听虫吟
+月过石阶花落影
+流星万里无处寻
+十万孤独谁相与
+且听，幽幽虫吟
+
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-15 00:07" pubdate>
+              2021-05-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%A1%8C%E5%B0%86%E5%B0%B1%E6%9C%A8/">行将就木</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/15/%E6%9C%89%E9%9B%A8/" target="_self">
+          有雨
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/05/15/%E6%9C%89%E9%9B%A8/" target="_self">
+          
+          
+            
+          
+          只听天气预报说今天有雨，却不想这雨临晨突然就来了，先前并无半分征兆，而且这雨声势之大，已是许久不见了。虽是隔了屋墙，那惶惶之声却不绝于耳，断了清梦不提还平生出些许烦躁之感，难眠之际竟又点起了戒了多时的烟。这雨下得急却也下得短，不知何时，我复又见了周公去了，醒罢已是窗晓初透，鸟雀叽叽了。至于那雨，早已是不得见不得闻了，除了那微湿的土地新净的树荫，还有那缭绕在山头的蒙蒙雾气，证明曾下过雨，这雨竟像从未
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-15 00:06" pubdate>
+              2021-05-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%A1%8C%E5%B0%86%E5%B0%B1%E6%9C%A8/">行将就木</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/15/%E4%BB%96%E6%AD%BB%E4%BA%86/" target="_self">
+          他死了
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/05/15/%E4%BB%96%E6%AD%BB%E4%BA%86/" target="_self">
+          
+          
+            
+          
+                    走过万水千山他原本就是个计划好了要死的人走过这万水千山看过了夕阳也看过了日出看过了漫天飞雪也看过了平地流沙这一生似乎也就够了也就无憾了
+走过这万水千山有过了亲情也有过了爱情经历过了人情冷暖也体验过了世态炎凉这一生似乎也就累了也就无求了
+所以他死了就这么死了就像他计划好的那样死了
+
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-15 00:05" pubdate>
+              2021-05-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%A1%8C%E5%B0%86%E5%B0%B1%E6%9C%A8/">行将就木</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/15/%E5%A4%9C%E7%A9%BA%E9%97%AA%E7%83%81%E7%9A%84%E6%98%9F/" target="_self">
+          夜空闪烁的星
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/05/15/%E5%A4%9C%E7%A9%BA%E9%97%AA%E7%83%81%E7%9A%84%E6%98%9F/" target="_self">
+          
+          
+            
+          
+          我是只在夜空才能闪烁的一颗星 我是只在夜空才能闪烁的一颗星从白云消散夕阳西下月亮升起就为出现在你的眼中做准备当我终于缀于夜空那颗忽明忽暗的一闪一闪的星那就是我我永远隔着星海凝视着你我一直在等你等你仰头望见我等你发现我的光暗等你也隔着星海凝视我可是他们呀，实在太耀眼把我挤在他们光芒的缝隙我奋力的闪烁依旧被遮掩连我自己都差点迷失你的偶尔仰望星空的眼睛也许会看向我大概永远都不会当黑夜终于再次被白昼取代我
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-15 00:02" pubdate>
+              2021-05-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%A1%8C%E5%B0%86%E5%B0%B1%E6%9C%A8/">行将就木</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+
+
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
+    </span>
+  </nav>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      $('#local-search-input').on('click', function() {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      });
+      $('#modalSearch').on('shown.bs.modal', function() {
+        $('#local-search-input').focus();
+      });
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
