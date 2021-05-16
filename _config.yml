@@ -106,5 +106,6 @@ theme: fluid
 deploy:
   type: git
   repo: 
-    github: https://github.com/zhangburang/zhangburang.github.io.git
+    github: https://github.com/nqlz/nqlz.github.io.git
   branch: master
+  
